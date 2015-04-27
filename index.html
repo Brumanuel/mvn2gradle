@@ -65,6 +65,7 @@
 			groupIdRegex = /<groupId>(.+)<\/groupId>/;
 			artifactIdRegex = /<artifactId>(.+)<\/artifactId>/;
 			versionRegex = /<version>(.+)<\/version>/;
+			classifierRegex = /<classifier>(.+)<\/classifier>/;
 
 			outDepList = [];
 			depList = $('#maven').val().split('<dependency>');
@@ -77,6 +78,7 @@
 				group = groupIdRegex.exec(dep);
 				artifact = artifactIdRegex.exec(dep);
 				version = versionRegex.exec(dep);
+				classifier = classifierRegex.exec(dep);
 
 				if(version != null && version.length > 1) {
 					version = version[1];
@@ -85,11 +87,18 @@
 
 					}	
 				}
-
+				
 				if(group !== null && artifact !== null && version !== null) {
-					outDepList.push("compile \"" + group[1] + ':' + artifact[1] + ':' + version + "\"");
-
+					gradleCommand = "compile \"" + group[1] + ':' + artifact[1] + ':' + version;
+					if( classifier !== null) {
+						gradleCommand += ":"+classifier[1];
+					}
+					gradleCommand += "\"";
+					outDepList.push(gradleCommand);
 				}
+
+				
+
 			}
 
 			return outDepList;
